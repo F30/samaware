@@ -1,16 +1,13 @@
 {% extends "orga/base.html" %}
 
-{% load compress %}
 {% load i18n %}
 {% load static %}
 {% load samaware_extras %}
 
 {% block stylesheets %}
-{% compress css %}
 {# Order of the stylesheets is relevent here (the later, the more precedence) #}
 <link rel="stylesheet" href="{% static 'orga/css/dashboard.css' %}">
 <link rel="stylesheet" href="{% static 'samaware/samaware.css' %}">
-{% endcompress %}
 {% endblock stylesheets %}
 
 {% block scripts %}

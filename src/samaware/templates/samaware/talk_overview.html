@@ -1,6 +1,5 @@
 {% extends "orga/base.html" %}
 
-{% load compress %}
 {% load event_tags %}
 {% load html_signal %}
 {% load i18n %}
@@ -9,16 +8,12 @@
 {% load samaware_extras %}
 
 {% block stylesheets %}
-{% compress css %}
 <link rel="stylesheet" href="{% static 'samaware/samaware.css' %}">
-{% endcompress %}
 {% endblock stylesheets %}
 
 {% block scripts %}
-{% compress js %}
 <script src="{% static 'samaware/vendor/htmx.min.js' %}"></script>
 <script src="{% static 'samaware/samaware.js' %}" defer="defer"></script>
-{% endcompress %}
 {% endblock scripts %}
 
 {% block extra_title %}{{ submission.title }} :: SamAware :: {% endblock extra_title %}

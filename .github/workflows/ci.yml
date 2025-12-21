@@ -44,10 +44,8 @@ jobs:
           apt-get --yes update
           apt-get --yes install curl
           ./build_vendored.py
-      - name: Collect and compress assets
-        run: |
-          django-admin collectstatic --noinput
-          django-admin compress
+      - name: Collect assets
+        run: django-admin collectstatic --noinput
         env:
           DJANGO_SETTINGS_MODULE: pretalx.settings
       - run: pytest --junitxml=pytest-results.xml tests
@@ -85,10 +83,8 @@ jobs:
         run: |
           apt-get --yes install curl
           ./build_vendored.py
-      - name: Collect and compress assets
-        run: |
-          django-admin collectstatic --noinput
-          django-admin compress
+      - name: Collect assets
+        run: django-admin collectstatic --noinput
         env:
           DJANGO_SETTINGS_MODULE: pretalx.settings
       - run: pytest --junitxml=pytest-results.xml tests

@@ -31,10 +31,9 @@ First, install the package into your pretalx installation's Python environment:
 
     (env) > pip install samaware
 
-Next, you need to collect and compress static assets:
+Next, you need to collect static assets:
 
     (env) > DJANGO_SETTINGS_MODULE=pretalx.settings django-admin collectstatic
-    (env) > DJANGO_SETTINGS_MODULE=pretalx.settings django-admin compress
 
 Afterward, restart pretalx.
 
