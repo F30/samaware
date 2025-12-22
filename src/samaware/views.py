@@ -2,6 +2,7 @@ import datetime
 from functools import cached_property
 
 from csp.decorators import csp_update
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import linebreaks_filter
@@ -11,19 +12,19 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, DetailView, FormView, ListView, TemplateView, UpdateView
 from django_context_decorator import context
+from django_tables2 import SingleTableMixin
 from pretalx.common.templatetags.rich_text import rich_text as rich_text_filter
 from pretalx.common.views.generic import CreateOrUpdateView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     EventPermissionRequired,
     PermissionRequired,
-    Sortable,
 )
 from pretalx.submission.models.submission import Submission, SubmissionStates
 
 import samaware
 
-from . import forms, models, queries
+from . import forms, models, queries, tables
 
 
 # htmx requires 'unsafe-eval' for its "delay" Modifier
@@ -89,11 +90,12 @@ class TalkOverview(PermissionRequired, DetailView):
         return data
 
 
-class MissingSpeakersList(EventPermissionRequired, Sortable, ListView):
+class MissingSpeakersList(EventPermissionRequired, SingleTableMixin, ListView):
 
     permission_required = samaware.REQUIRED_PERMISSIONS
-    sortable_fields = ('submission__track__name', 'submission__title', 'start', 'room')
-    default_sort_field = 'start'
+    table_class = tables.MissingSpeakersTable
+    table_pagination = False
+    table_template_name = settings.DJANGO_TABLES2_TEMPLATE
     template_name = 'samaware/missing_speakers_list.html'
     context_object_name = 'slots'
     upcoming_timeframe = datetime.timedelta(hours=4)
@@ -106,25 +108,26 @@ class MissingSpeakersList(EventPermissionRequired, Sortable, ListView):
         else:
             slots = queries.get_slots_missing_speakers(self.request.event)
 
-        slots = self.sort_queryset(slots)
         return slots.select_related('submission', 'submission__track', 'submission__event', 'room') \
                     .prefetch_related('submission__speakers')
 
-    @context
-    def event_profiles(self):
+    def get_table_kwargs(self):
+        kwargs = super().get_table_kwargs()
         profiles = queries.get_all_speakers(self.request.event).select_related('user', 'event')
-        return {profile.user: profile for profile in profiles}
+        kwargs['event_profiles'] = {profile.user: profile for profile in profiles}
+        return kwargs
 
     @context
     def filter_form(self):
         return forms.UpcomingFilter(self.request.GET)
 
 
-class NoRecordingList(EventPermissionRequired, Sortable, ListView):
+class NoRecordingList(EventPermissionRequired, SingleTableMixin, ListView):
 
     permission_required = samaware.REQUIRED_PERMISSIONS
-    sortable_fields = ('submission__track__name', 'submission__title', 'start', 'room')
-    default_sort_field = 'start'
+    table_class = tables.NoRecordingTable
+    table_pagination = False
+    table_template_name = settings.DJANGO_TABLES2_TEMPLATE
     template_name = 'samaware/no_recording_list.html'
     context_object_name = 'slots'
     upcoming_timeframe = datetime.timedelta(hours=4)
@@ -141,7 +144,6 @@ class NoRecordingList(EventPermissionRequired, Sortable, ListView):
         if filter_form.is_valid() and filter_form.cleaned_data.get('no_rider'):
             slots = slots.filter(submission__tech_rider__isnull=True)
 
-        slots = self.sort_queryset(slots)
         return slots.select_related('submission', 'submission__track', 'submission__event', 'room')
 
     @context
@@ -149,11 +151,12 @@ class NoRecordingList(EventPermissionRequired, Sortable, ListView):
         return forms.NoRecordingFilter(self.request.GET)
 
 
-class TechRiderList(EventPermissionRequired, Sortable, ListView):
+class TechRiderList(EventPermissionRequired, SingleTableMixin, ListView):
 
     permission_required = samaware.REQUIRED_PERMISSIONS
-    sortable_fields = ('submission__title', 'start', 'room')
-    default_sort_field = 'submission__title'
+    table_class = tables.TechRiderTable
+    table_pagination = False
+    table_template_name = settings.DJANGO_TABLES2_TEMPLATE
     template_name = 'samaware/tech_rider_list.html'
     context_object_name = 'slots'
     upcoming_timeframe = datetime.timedelta(hours=4)
@@ -167,7 +170,6 @@ class TechRiderList(EventPermissionRequired, Sortable, ListView):
             upcoming_threshold = now + self.upcoming_timeframe
             slots = slots.filter(start__gt=now, start__lt=upcoming_threshold)
 
-        slots = self.sort_queryset(slots)
         return slots.select_related('submission', 'submission__tech_rider', 'submission__event', 'room')
 
     @context
@@ -251,11 +253,12 @@ class TechRiderDelete(PermissionRequired, ActionConfirmMixin, DeleteView):
         return reverse('plugins:samaware:tech_rider_list', kwargs={'event': self.get_object().event.slug})
 
 
-class CareMessageList(EventPermissionRequired, Sortable, ListView):
+class CareMessageList(EventPermissionRequired, SingleTableMixin, ListView):
 
     permission_required = samaware.REQUIRED_PERMISSIONS
-    sortable_fields = ('speaker__name', '_first_talk_start')
-    default_sort_field = 'speaker__name'
+    table_class = tables.CareMessageTable
+    table_pagination = False
+    table_template_name = settings.DJANGO_TABLES2_TEMPLATE
     template_name = 'samaware/care_message_list.html'
     # "messages" is already used globally
     context_object_name = 'care_messages'
@@ -266,31 +269,12 @@ class CareMessageList(EventPermissionRequired, Sortable, ListView):
         # available during sorting itself, which is required to sort by "first_talk_start"
         return messages.select_related('speaker')
 
-    def sort_queryset(self, qs):
-        sort_key = self.request.GET.get('sort', '')
-        reverse_sort = sort_key.startswith('-')
-        plain_key = sort_key[1:] if reverse_sort else sort_key
-
-        if plain_key == '_first_talk_start':
-            return sorted(qs, key=lambda m: self.speaker_first_slots[m.speaker].start, reverse=reverse_sort)
-
-        return super().sort_queryset(qs)
-
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        # Sort here, reasoning see above
-        context_data[self.context_object_name] = self.sort_queryset(self.object_list)
-        return context_data
-
-    @context
-    def speaker_talks(self):
-        return queries.talks_for_speakers(self.speakers_with_message, self.request.event)
-
-    # "please make sure to add the `@context` decorator above the `@cached_property` decorator"
-    @context
-    @cached_property
-    def speaker_first_slots(self):
-        return queries.first_slot_for_speakers(self.speakers_with_message, self.request.event)
+    def get_table_kwargs(self):
+        kwargs = super().get_table_kwargs()
+        kwargs['speaker_talks'] = queries.talks_for_speakers(self.speakers_with_message, self.request.event)
+        kwargs['speaker_first_slots'] = queries.first_slot_for_speakers(self.speakers_with_message,
+                                                                        self.request.event)
+        return kwargs
 
     @cached_property
     def speakers_with_message(self):
