@@ -12,7 +12,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, DetailView, FormView, ListView, TemplateView, UpdateView
 from django_context_decorator import context
 from pretalx.common.templatetags.rich_text import rich_text as rich_text_filter
-from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views.generic import CreateOrUpdateView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     EventPermissionRequired,
