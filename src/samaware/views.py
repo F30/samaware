@@ -194,7 +194,7 @@ class BaseTechRiderEdit(PermissionRequired, CreateOrUpdateView):
         else:
             return self.request.event
 
-    def form_valid(self, form):
+    def form_valid(self, form, _skip_logging=False):
         self.object = form.save(commit=False)
         self.object.event = self.request.event
         self.object.author = self.request.user
@@ -320,7 +320,7 @@ class CareMessageEdit(PermissionRequired, CreateOrUpdateView):
 
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form, _skip_logging=False):
         self.object = form.save(commit=False)
         self.object.event = self.request.event
         self.object.author = self.request.user
@@ -466,7 +466,7 @@ class TechRiderFragment(BaseTechRiderEdit):
 
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form, _skip_logging=False):
         super().form_valid(form)
 
         data = self.get_context_data()
