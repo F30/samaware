@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.test import Client
+from django.test import Client, modify_settings
 from django.urls import reverse
 from django_scopes import scope
 from pretalx.person.models.user import User
@@ -48,6 +48,10 @@ class TalkOverviewTest(ViewsTestCase):
         self.path = reverse('plugins:samaware:talk_overview', kwargs={'event': self.event.slug,
                                                                       'code': self.submission.code})
 
+    # Minification breaks matching for the exact HTML markup in the response
+    @modify_settings(MIDDLEWARE={
+        'remove': 'django_minify_html.middleware.MinifyHtmlMiddleware'
+    })
     def test_overview(self):
         with scope(event=self.event):
             profile = self.speaker.event_profile(self.event)
