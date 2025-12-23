@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup packages
         run: |
-          pip install pretalx==2025.1.0
+          pip install pretalx==2025.2.2
           pip install -e .[dev]
       - run: make lint
 
@@ -26,18 +26,8 @@ jobs:
       checks: write
     steps:
       - uses: actions/checkout@v4
-      # REVISIT: Actually use pretalx release
-      # Currently disabled because of unreleased migration to django-csp 4
-      #- name: pip install pretalx==2025.1.0
-      - name: Install pretalx from known-good Git commit (as workaround)
-        working-directory: /tmp
-        run: |
-          apt-get --yes update
-          apt-get --yes install git
-          git clone https://github.com/pretalx/pretalx.git
-          cd pretalx
-          git checkout 22e2cb44a
-          pip install .
+      - name: install pretalx release
+        run: pip install pretalx==2025.2.2
       - run: pip install -e .[dev]
       - name: Get vendored dependencies
         run: |
@@ -66,7 +56,7 @@ jobs:
   test_head:
     name: Test with current pretalx HEAD and recent Python
     runs-on: ubuntu-latest
-    container: python:3.13-bookworm
+    container: python:3.14-bookworm
     permissions:
       checks: write
     steps:
