@@ -6,6 +6,8 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from pretalx.schedule.models import TalkSlot
 
+from . import models
+
 
 def _get_talk_overview_link(record):
 
@@ -140,7 +142,7 @@ class CareMessageTable(django_tables2.Table):
     )
 
     class Meta:
-        model = TalkSlot
+        model = models.SpeakerCareMessage
         fields = ('speaker', 'text', 'talks', 'first_start')
         order_by = 'speaker'
 
