@@ -22,11 +22,8 @@ SamAware enhances the pretalx orga interface with these features:
 
 ## Installation
 
-> [!WARNING]
-> Due to [backward-incompatible changes in django-csp 4](https://django-csp.readthedocs.io/en/latest/migration-guide.html), SamAware is currently not compatible with any released pretalx version, but only the current development version from Git.
-> This is going to change with the next pretalx release.
-
-SamAware is available from PyPI and gets installed like any other pretalx plugin.
+SamAware requires at least pretalx version 2025.2.
+It is available from PyPI and gets installed like any other pretalx plugin.
 First, install the package into your pretalx installation's Python environment:
 
     (env) > pip install samaware
@@ -57,10 +54,9 @@ In both cases, you then clone the SamAware repo, change to that source directory
 
     > pip install -e .[dev]
 
-You probably need to collect and compress static assets and apply migrations:
+You probably need to collect static assets and apply migrations:
 
     > DJANGO_SETTINGS_MODULE=pretalx.settings django-admin collectstatic
-    > DJANGO_SETTINGS_MODULE=pretalx.settings django-admin compress
     > DJANGO_SETTINGS_MODULE=pretalx.settings django-admin migrate
 
 If not done already, initialize your pretalx dev instance through:
