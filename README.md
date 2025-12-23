@@ -17,7 +17,6 @@ SamAware enhances the pretalx orga interface with these features:
 - Overview page for each talk gathering the relevant submission and speaker information
 - List of talks with "Don't record" setting
 - Tech Riders for talks with special technical requirements
-- Optional sync of the Tech Riders to a [Wekan](https://wekan.fi/) board *(error-prone, to be replaced with sync to another ticket system)*
 - Speaker Care Messages with internal information on a speaker that will be displayed prominently when accessing them or their talks
 
 ## Installation
@@ -36,9 +35,7 @@ Afterward, restart pretalx.
 
 SamAware should now appear in the pretalx orga interface of your Event under "Settings" / "Plugins" / "Features".
 You can enable it there for each Event.
-
-SamAware requires no configuration unless you plan to use Wekan sync of Tech Riders.
-For that feature, provide the required information under "Settings" / "SamAware".
+It requires no configuration.
 
 ## Development
 

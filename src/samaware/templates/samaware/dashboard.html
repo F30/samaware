@@ -66,9 +66,6 @@
             <a href="{% url 'plugins:samaware:tech_rider_list' event=request.event.slug %}?upcoming=on" class="dashboard-block-addon dashboard-block-addon-info">
                 {% translate 'next 4 hours' %}: {{ tech_riders_4h.count }}
             </a>
-            <a href="/todo" class="dashboard-block-addon dashboard-block-addon-success">
-                {% translate 'unsynced' %}: 0
-            </a>
         </div>
     </div>
     <div class="dashboard-block-wrapper">

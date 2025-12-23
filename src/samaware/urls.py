@@ -77,10 +77,5 @@ urlpatterns = [
         'orga/event/<slug:event>/p/samaware/fragments/tech-rider/<code>',
         views.TechRiderFragment.as_view(),
         name='tech_rider_fragment'
-    ),
-    path(
-        'orga/event/<slug:event>/settings/p/samaware/',
-        views.SamAwareSettings.as_view(),
-        name='settings'
     )
 ]

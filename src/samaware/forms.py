@@ -81,9 +81,7 @@ class SamAwareSettingsForm(forms.ModelForm):
 
     class Meta:
         model = SamAwareSettings
-        fields = ['wekan_base_url', 'wekan_username', 'wekan_password', 'wekan_board_id', 'wekan_list_title',
-                  'wekan_swimlane_title']
-        widgets = {'wekan_password': forms.PasswordInput(render_value=True)}
+        fields = []
 
     def __init__(self, *args, **kwargs):
         event = kwargs.pop('event')

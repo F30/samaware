@@ -21,7 +21,7 @@ classifiers = [
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content"
 ]
 requires-python = ">= 3.10"
-dependencies = ["django-context-decorator", "django-csp>=4.0", "django-scopes", "django-tables2", "requests"]
+dependencies = ["django-context-decorator", "django-csp>=4.0", "django-scopes", "django-tables2"]
 
 [project.optional-dependencies]
 dev = ["build", "setuptools", "ruff", "pylint", "pytest", "pytest-django"]
