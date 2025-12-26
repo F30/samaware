@@ -103,6 +103,10 @@ class TechRiderTable(django_tables2.Table):
         verbose_name=_('Talk'),
         linkify=_get_tech_rider_link
     )
+    updated = django_tables2.DateTimeColumn(
+        accessor = 'submission__tech_rider__updated',
+        verbose_name=_('Updated')
+    )
     text = django_tables2.TemplateColumn(
         accessor='submission__tech_rider__text',
         orderable=False,
@@ -112,7 +116,7 @@ class TechRiderTable(django_tables2.Table):
 
     class Meta:
         model = TalkSlot
-        fields = ('submission', 'start', 'room', 'text')
+        fields = ('submission', 'start', 'room', 'updated', 'text')
         order_by = 'submission'
 
 

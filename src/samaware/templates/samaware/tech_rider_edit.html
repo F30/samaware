@@ -26,6 +26,10 @@
         <div class="col-md-3 text-right pr-0"><strong>{% translate 'Author' %}</strong></div>
         <div class="col-md-9">{{ object.author }}</div>
     </div>
+    <div class="row mb-3">
+        <div class="col-md-3 text-right pr-0"><strong>{% translate 'Last updated' %}</strong></div>
+        <div class="col-md-9">{{ object.updated|date:'l, j M Y, H:i' }}</div>
+    </div>
     {% endif %}
 
     {% csrf_token %}
