@@ -14,14 +14,14 @@
 <script src="{% static 'samaware/vendor/htmx.min.js' %}"></script>
 {% endblock scripts %}
 
-{% block extra_title %}SamAware :: {% endblock extra_title %}
+{% block extra_title %}{% translate 'Dashboard' %} :: SamAware :: {% endblock extra_title %}
 
 {% block content %}
 
-<h2>SamAware</h2>
+<h2>SamAware {% translate 'Dashboard' %}</h2>
 
 <article class="dashboard-list">
-    <h3 class="sr-only">{% translate 'Dashboard' %}</h3>
+    <h3 class="sr-only">{% translate 'Status Overview' %}</h3>
 
     <div class="dashboard-block-wrapper">
         <div class="dashboard-block">

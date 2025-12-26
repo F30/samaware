@@ -24,6 +24,10 @@ def navbar_info(sender, request, **kwargs):  # noqa: ARG001, pylint: disable=W06
         'url': reverse('plugins:samaware:dashboard', kwargs={'event': request.event.slug}),
         'active': url.namespace == 'plugins:samaware',
         'children': [{
+            'label': _('Dashboard'),
+            'url': reverse('plugins:samaware:dashboard', kwargs={'event': request.event.slug}),
+            'active': url.namespace == 'plugins:samaware' and url.url_name == 'dashboard',
+        }, {
             'label': _('Talks missing speakers'),
             'url': reverse('plugins:samaware:missing_speakers', kwargs={'event': request.event.slug}),
             'active': url.namespace == 'plugins:samaware' and url.url_name == 'missing_speakers',
